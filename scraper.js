@@ -5,8 +5,10 @@ const fs = require('fs');
   const browser = await puppeteer.launch({headless: true});
   const page = await browser.newPage();
   await page.goto('https://www.amazon.com.br/');
-  //await page.screenshot({ path: 'example.png' });
-  await page.type('#twotabsearchtextbox','Igora 9-7 Tinta')
+  
+  const searchWord = 'world of warcraft' // nome do produto a ser pesquisado
+
+  await page.type('#twotabsearchtextbox',searchWord)
 
   await page.click('#nav-search-submit-button')
 
@@ -41,12 +43,12 @@ const fs = require('fs');
         return 0;
       })
 
-      console.log('RESULTADO', resultProductData)
+    
       return resultProductData
    
   })
 
-  fs.writeFile('tinta-igora-amazon.json', JSON.stringify(result, null,2), err => {
+  fs.writeFile(`${slugify(searchWord)}-amazon.json`, JSON.stringify(result, null,2), err => {
     if(err){
         throw err
     } 
@@ -56,3 +58,12 @@ const fs = require('fs');
   await browser.close();
 
 })();
+
+function slugify(text){
+  return text.toString().toLowerCase()
+    .replace(/\s+/g, '-')           // Replace spaces with -
+    .replace(/[^\w\-]+/g, '')       // Remove all non-word chars
+    .replace(/\-\-+/g, '-')         // Replace multiple - with single -
+    .replace(/^-+/, '')             // Trim - from start of text
+    .replace(/-+$/, '');            // Trim - from end of text
+}
