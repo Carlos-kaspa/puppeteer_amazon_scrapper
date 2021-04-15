@@ -2,11 +2,12 @@ const puppeteer = require('puppeteer');
 const fs = require('fs');
 
 (async () => {
+  const searchWord = 'world of warcraft' // nome do produto a ser pesquisado
+
   const browser = await puppeteer.launch({headless: true});
   const page = await browser.newPage();
   await page.goto('https://www.amazon.com.br/');
   
-  const searchWord = 'world of warcraft' // nome do produto a ser pesquisado
 
   await page.type('#twotabsearchtextbox',searchWord)
 
@@ -19,6 +20,7 @@ const fs = require('fs');
     const productName = document.querySelectorAll('[data-component-type=s-search-results] div.s-main-slot > [data-index] .sg-col-inner [cel_widget_id] div > div > div > h2> a > span')
     const productImage = document.querySelectorAll('[data-component-type=s-search-results] div.s-main-slot > [data-index] .sg-col-inner [cel_widget_id] div > div > span > a > div > img')
     const productPrice = document.querySelectorAll('[data-component-type=s-search-results] div.s-main-slot > [data-index] .sg-col-inner [cel_widget_id] div > div > div > div > a > .a-price > .a-offscreen')
+    const productLink = document.querySelectorAll('[data-component-type=s-search-results] div.s-main-slot > [data-index] .sg-col-inner [cel_widget_id] div > div > span > a')
     let resultProductData = []
 
     for(const [index,product] of productName.entries()){
@@ -29,6 +31,7 @@ const fs = require('fs');
             fullPrice:productPrice[index].innerText.replace('R$','').trim(),
             wholePrice: parseInt(productPrice[index].innerText.replace('R$','').split(',')[0]),
             fractionPrice:parseInt(productPrice[index].innerText.replace('R$','').split(',')[1]),
+            link:productLink[index].href
         })  
     }
 
